@@ -5,12 +5,19 @@ class NetworkTest < Minitest::Test
 
   def setup
     @switch = Switch.new("switch1", 4)
+
     @host1 = Host.new("host1", 1)
     @host2 = Host.new("host2", 1)
     @host3 = Host.new("host3", 1)
+
+    # Physical connections (wires)
     @host1.interfaces[0].connect_to(@switch.interfaces[0])
     @host2.interfaces[0].connect_to(@switch.interfaces[1])
     @host3.interfaces[0].connect_to(@switch.interfaces[2])
+
+    # IP address assignment
+    # Here, the address are being statically assigned. In most local networks,
+    # these are automatically assigned by the DHCP server.
     @host1_ip = IPv4Address.new("1.2.3.4")
     @host1.interfaces[0].ip_address = @host1_ip
     @host2_ip = IPv4Address.new("1.2.3.5")
@@ -23,10 +30,15 @@ class NetworkTest < Minitest::Test
 
   def test_send
     Log.puts "--- send"
+
+    # promiscuous mode allows the host to process any inbound packet
     @host3.interfaces[0].promiscuous = true
+    # Host 1 is sending a packet to host 2
     packet = Layer2Packet.new(to_mac: @host2.interfaces[0].mac_address, payload: "1 to 2")
     @host1.interfaces[0].packet_out(packet)
+
     sleep 0.1
+
     packet = Layer2Packet.new(to_mac: @host1.interfaces[0].mac_address, payload: "2 to 1")
     @host2.interfaces[0].packet_out(packet)
     packet = Layer2Packet.new(to_mac: @host2.interfaces[0].mac_address, payload: "1 to 2")
@@ -37,6 +49,7 @@ class NetworkTest < Minitest::Test
 
   def test_broadcast
     Log.puts "--- broadcast"
+
     packet = Layer2Packet.new(to_mac: MacAddress::BROADCAST, payload: "hello everyone")
     @host1.interfaces[0].packet_out(packet)
   end
@@ -56,9 +69,9 @@ class NetworkTest < Minitest::Test
 
   def txst_ip_send
     Log.puts "--- ip send"
-    @host1.interfaces[0].add_ip_address(host1_ip, 24)
-    @host2.interfaces[0].add_ip_address(host2_ip, 24)
-    packet = Layer3Packet.new(from_ip: host1_ip, to_ip: host2_ip, payload: "hey ho")
+    @host1.interfaces[0].add_ip_address(@host1_ip, 24)
+    @host2.interfaces[0].add_ip_address(@host2_ip, 24)
+    packet = Layer3Packet.new(from_ip: @host1_ip, to_ip: @host2_ip, payload: "hey ho")
     @host1.interfaces[0].ipv4_packet_out(packet)
   end
 end
