@@ -24,7 +24,10 @@ class IPv4Address
 
   def initialize(dotted = "0.0.0.0")
     bytes = dotted.split(".")
-    @word = bytes.map(&:to_i).pack("CCCC").unpack("L>")[0]
+
+    # Unpacking with N guarantees big-endianness, which is the network byte
+    # order
+    @word = bytes.map(&:to_i).pack("CCCC").unpack("N").first
   end
 
   def ==(rhs)
@@ -47,7 +50,7 @@ class IPv4Address
   end
 
   def to_s
-    [@word].pack("L>").unpack("CCCC").map(&:to_s).join(".")
+    [@word].pack("N").unpack("CCCC").map(&:to_s).join(".")
   end
 end
 
