@@ -6,8 +6,17 @@
 # switch (except, of course, for broadcast packets). Instead, they "learn" what
 # MAC addresses are visible on each port by examining incoming packets, and
 # forward packets only to the port that is known to correspond to an incoming
-# packet's "to" address.
+# packet's "to" address. (Difference between switch and hub is that a hub
+# forwards all packets along to all hosts)
 #
+#
+# (Analogy: local post office, or front desk at an office that handles
+# forwarding calls onto extensions)
+#
+# Physical switches (or hubs) are only needed for wired ethernet networks.
+# Wi-fi networks do not need switches bc the wireless protocol already sort of
+# takes care of the job the switch does of interconnecting hosts.
+
 class Switch < Host
   attr_reader :ports
 
