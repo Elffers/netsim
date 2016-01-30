@@ -24,6 +24,9 @@ class Interface
     @other_end = other_end
     in_chan = Agent.channel!(Layer2Packet, 1000, name: "in_#{@mac_address}")
     out_chan = Agent.channel!(Layer2Packet, 1000, name: "out_#{@mac_address}")
+
+    # This simulates a duplex connection (two interfaces are simulataneously
+    # sending and receiving packets)
     connect_channels(in_chan.as_receive_only, out_chan.as_send_only)
     other_end.connect_channels(out_chan.as_receive_only, in_chan.as_send_only)
   end
@@ -44,17 +47,18 @@ class Interface
   end
 
   protected
-
+  # Actual legit use of protected! Interfaces are only allowed to connect to
+  # other interfaces and nothing else.
   def connect_channels(in_chan, out_chan)
     raise "Already connected" if @in_chan
     @in_chan = in_chan
     @out_chan = out_chan
-    run
+    start_receive_loop
   end
 
   private
 
-  def run
+  def start_receive_loop
     go! do
       loop do
         packet, ok = @in_chan.receive
