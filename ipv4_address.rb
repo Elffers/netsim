@@ -41,6 +41,7 @@ class IPv4Address
 
   def network_addr(mask_size)
     addr = IPv4Address.new
+    # -1 is always all ones in 2's-complement int representation
     addr.word = @word & (-1 << (32 - mask_size))
     addr
   end
