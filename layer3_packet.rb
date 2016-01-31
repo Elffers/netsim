@@ -19,6 +19,6 @@ class Layer3Packet
   end
 
   def to_s
-    "(#{from_ip} -> #{to_ip} #{protocol} #{payload})"
+    "(#{from_ip} -> #{to_ip} #{payload})"
   end
 end
