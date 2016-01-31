@@ -41,16 +41,26 @@ class NetworkTest < Minitest::Test
     # promiscuous mode allows the host to process any inbound packet
     @host3.l2_interfaces[0].promiscuous = true
     # Host 1 is sending a packet to host 2
-    packet = Layer2Packet.new(to_mac: @host2.l2_interfaces[0].mac_address, payload: "1 to 2")
+    packet = Layer2Packet.new(
+      to_mac: @host2.l2_interfaces[0].mac_address,
+      payload: "1 to 2")
     @host1.l2_interfaces[0].packet_out(packet)
 
     sleep 0.1
 
-    packet = Layer2Packet.new(to_mac: @host1.l2_interfaces[0].mac_address, payload: "2 to 1")
+    packet = Layer2Packet.new(
+      to_mac: @host1.l2_interfaces[0].mac_address,
+      payload: "2 to 1")
     @host2.l2_interfaces[0].packet_out(packet)
-    packet = Layer2Packet.new(to_mac: @host2.l2_interfaces[0].mac_address, payload: "1 to 2")
+
+    packet = Layer2Packet.new(
+      to_mac: @host2.l2_interfaces[0].mac_address,
+      payload: "1 to 2")
     @host1.l2_interfaces[0].packet_out(packet)
-    packet = Layer2Packet.new(to_mac: @host1.l2_interfaces[0].mac_address, payload: "2 to 1")
+
+    packet = Layer2Packet.new(
+      to_mac: @host1.l2_interfaces[0].mac_address,
+      payload: "2 to 1")
     @host2.l2_interfaces[0].packet_out(packet)
   end
 

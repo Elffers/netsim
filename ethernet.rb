@@ -15,7 +15,7 @@ class Layer2Interface::Ethernet
     @host = host
     @name = name
     @mac_address = MacAddress.next
-    @trace = false
+    @trace = true
   end
 
   # Connect a cable from this interface to another interface.
@@ -75,10 +75,14 @@ class Layer2Interface::Ethernet
   # regardless of "to" address.
 
   def packet_in(packet)
-    if @promiscuous || packet.to_mac == @mac_address || packet.to_mac == MacAddress::BROADCAST
+    if should_process(packet)
       Log.puts "#{@host.name}/#{@name} got #{packet}" if @trace
       @host.handle_packet(self, packet)
     end
+  end
+
+  def should_process(packet)
+    @promiscuous || packet.to_mac == @mac_address || packet.to_mac == MacAddress::BROADCAST
   end
 
   def add_ip_address(address, subnet_mask_size)
