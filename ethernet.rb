@@ -5,7 +5,7 @@
 # Interfaces are uniquely identified by MAC addresses, and that is how they
 # refer to other interfaces when they want to send them packets.
 #
-class Interface
+class Layer2Interface::Ethernet
   attr_accessor :mac_address
   attr_reader :name
   attr_accessor :promiscuous
