@@ -6,12 +6,13 @@
 #
 # TODO: Build IPService to match ArpService for unpacking a Layer3Packet
 
-class IPv4Interface < Interface
+class Layer3Interface::IPv4
   attr_accessor :ip_address
   attr_accessor :subnet_mask_size
 
-  def initialize(*)
-    super
+  def initialize(host, name)
+    @host = host
+    @name = name
     @arp_service = ArpService.new(@host)
   end
 
