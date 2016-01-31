@@ -42,6 +42,7 @@ class Interface
   def full_name
     "#{@host.name}/#{@name}"
   end
+
   def to_s
     "#<Interface #{full_name} #{@mac_address}>"
   end
