@@ -67,10 +67,8 @@ class NetworkTest < Minitest::Test
     arp1.lookup(@host2_ip) { |mac| Log.puts ">>> #{mac}" }
   end
 
-  def txst_ip_send
+  def test_ip_send
     Log.puts "--- ip send"
-    @host1.interfaces[0].add_ip_address(@host1_ip, 24)
-    @host2.interfaces[0].add_ip_address(@host2_ip, 24)
     packet = Layer3Packet.new(from_ip: @host1_ip, to_ip: @host2_ip, payload: "hey ho")
     @host1.interfaces[0].ipv4_packet_out(packet)
   end
