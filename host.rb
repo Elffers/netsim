@@ -6,8 +6,8 @@ class Host
 
   def initialize(name, num_interfaces)
     @name = name
-    @interfaces = (0...num_interfaces).map { |i| IPv4Interface.new(self, "eth#{i}") }
     @protocol_handlers = {}
+    @interfaces = (0...num_interfaces).map { |i| IPv4Interface.new(self, "eth#{i}") }
   end
 
   def register_protocol_handler(protocol_name, handler)
