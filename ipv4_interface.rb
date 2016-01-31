@@ -3,6 +3,8 @@
 # allows IPv4 packets to be encapsulated in ethernet packets.
 # Therefore it is not really a subclass of an ethernet interface, but
 # rather belongs to one.
+#
+# TODO: Build IPService to match ArpService for unpacking a Layer3Packet
 
 class IPv4Interface < Interface
   attr_accessor :ip_address
@@ -13,8 +15,9 @@ class IPv4Interface < Interface
     @arp_service = ArpService.new(@host)
   end
 
-  def ipv4_packet_in(packet)
-
+  def ipv4_packet_in(ip_packet)
+    ethernet_packet = strip_headers ip_packet
+    packet_in ethernet_packet
   end
 
   def ipv4_packet_out(ip_packet)
@@ -35,5 +38,8 @@ class IPv4Interface < Interface
 
   def lookup_mac_address(ip_addr)
     @arp_service.lookup(ip_addr) { |mac_addr| return mac_addr }
+  end
+
+  def strip_headers ip_packet
   end
 end
