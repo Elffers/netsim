@@ -1,19 +1,14 @@
-# TODO: An ethernet interface is a hardware interface, modeled by the
-# Interface class. An IPv4 interface is a software interace that
-# allows IPv4 packets to be encapsulated in ethernet packets.
-# Therefore it is not really a subclass of an ethernet interface, but
-# rather belongs to one.
-#
 # TODO: Build IPService to match ArpService for unpacking a Layer3Packet
 
 class Layer3Interface::IPv4
-  attr_accessor :ip_address
+  attr_reader :ip_address
+  attr_reader :l2_interface
   attr_accessor :subnet_mask_size
 
-  def initialize(host, name)
+  def initialize(host:, ip_address:, l2_interface:)
     @host = host
-    @name = name
     @arp_service = ArpService.new(@host)
+    @l2_interface = l2_interface
   end
 
   def ipv4_packet_in(ip_packet)
@@ -25,7 +20,7 @@ class Layer3Interface::IPv4
     ip_packet.from_ip = @ip_address
     Log.puts "#{@host.name}/#{@name} sending #{ip_packet}" if @trace
     ethernet_packet = encapsulate(ip_packet)
-    packet_out ethernet_packet
+    l2_interface.packet_out ethernet_packet
   end
 
   private

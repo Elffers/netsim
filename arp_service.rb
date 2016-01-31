@@ -16,9 +16,10 @@ class ArpService
     else
       reply_chan = Agent.channel!(MacAddress, name: "ARP_#{ip_addr}")
       @mutex.synchronize { @pending_replies[ip_addr] << reply_chan }
-      @host.interfaces.each do |intf|
-        request = ArpPayload.request_packet(intf.mac_address, intf.ip_address, ip_addr)
-        intf.packet_out(request.dup)
+
+      @host.l3_interfaces.each do |intf|
+        request = ArpPayload.request_packet(intf.l2_interface.mac_address, intf.ip_address, ip_addr)
+        intf.l2_interface.packet_out(request.dup)
       end
       select! do |s|
         s.case(reply_chan, :receive) do |mac|
@@ -38,9 +39,9 @@ class ArpService
     case arp.operation
       when :request
         Log.puts "#{interface.full_name} ARP: looking up #{arp.target_ip}"
-        @host.interfaces.each do |intf|
+        @host.l3_interfaces.each do |intf|
           if intf.ip_address == arp.target_ip
-            reply = ArpPayload.reply_packet(packet, intf.mac_address, intf.ip_address)
+            reply = ArpPayload.reply_packet(packet, intf.l2_interface.mac_address, intf.ip_address)
             interface.packet_out(reply)
           end
         end

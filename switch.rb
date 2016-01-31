@@ -20,10 +20,11 @@
 class Switch < Host
   attr_reader :ports
 
-  def initialize(name, num_ports)
+  def initialize(name)
     super
+    # TODO: Switch will inherit @l3_interfaces, but shouldn't. Refactor later.
     @mutex = Mutex.new
-    @interfaces.each { |intf| intf.promiscuous = true }
+    @l2_interfaces.each { |intf| intf.promiscuous = true }
     @mac_map = {}
   end
 
@@ -37,7 +38,7 @@ class Switch < Host
     if packet.to_mac == MacAddress::BROADCAST
       # Broadcast packets go back out to all interfaces except the one they
       # came in on.
-      @interfaces.each_with_index do |out_port, i|
+      @l2_interfaces.each_with_index do |out_port, i|
         if out_port != interface
           out_port.packet_out(packet)
         end

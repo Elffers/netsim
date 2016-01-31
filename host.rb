@@ -1,13 +1,27 @@
 # A host is an active device connected to one or more networks via interfaces.
 
 class Host
-  attr_reader :interfaces
   attr_reader :name
+  attr_reader :l2_interfaces
+  attr_reader :l3_interfaces
 
-  def initialize(name, num_interfaces)
+  def initialize(name)
     @name = name
     @protocol_handlers = {}
-    @interfaces = (0...num_interfaces).map { |i| IPv4Interface.new(self, "eth#{i}") }
+    @l2_interfaces = []
+    @l3_interfaces = []
+  end
+
+  def add_ethernet_interface
+    @l2_interfaces << Layer2Interface::Ethernet.new(self, "eth#{l2_interfaces.size}")
+  end
+
+  def add_ipv4_interface(l2_interface:, ip_address:)
+    @l3_interfaces <<
+    Layer3Interface::IPv4.new(
+      host: self,
+      ip_address: ip_address,
+      l2_interface: l2_interface)
   end
 
   def register_protocol_handler(protocol_name, handler)
