@@ -15,5 +15,6 @@ require_relative 'layer3_packet'
 require_relative 'mac_address'
 require_relative 'switch'
 require_relative 'log'
+require_relative 'test_service'
 
 Log.puts "Log started"

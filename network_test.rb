@@ -38,33 +38,55 @@ class NetworkTest < Minitest::Test
     sleep 0.1
   end
 
-  def test_send
+  def test_layer2_packet_out
     Log.puts "--- send"
 
+    test1 = TestService.new(@host1)
+    test2 = TestService.new(@host2)
     # promiscuous mode allows the host to process any inbound packet
     @host3.l2_interfaces[0].promiscuous = true
+
     # Host 1 is sending a packet to host 2
+    # This packet should be dropped because the switch doesn't know where to
+    # send it, but it learns host1's mac address.
     packet = Layer2Packet.new(
       to_mac: @host2.l2_interfaces[0].mac_address,
-      payload: "1 to 2")
+      payload: "1 to 2",
+      protocol: :test
+    )
     @host1.l2_interfaces[0].packet_out(packet)
 
     sleep 0.1
 
+    # This is the first packet that should be successfully received because the
+    # switch knows where to send packets destined for host1
     packet = Layer2Packet.new(
       to_mac: @host1.l2_interfaces[0].mac_address,
-      payload: "2 to 1")
+      payload: "2 to 1",
+      protocol: :test
+    )
     @host2.l2_interfaces[0].packet_out(packet)
 
+    # Host1 sending a packet to host2 should succeed
     packet = Layer2Packet.new(
       to_mac: @host2.l2_interfaces[0].mac_address,
-      payload: "1 to 2")
+      payload: "1 to 2",
+      protocol: :test
+    )
     @host1.l2_interfaces[0].packet_out(packet)
 
+    # Host2 sending a packet to host1 should succeed
     packet = Layer2Packet.new(
       to_mac: @host1.l2_interfaces[0].mac_address,
-      payload: "2 to 1")
+      payload: "2 to 1",
+      protocol: :test
+    )
     @host2.l2_interfaces[0].packet_out(packet)
+
+    sleep 0.1
+
+    assert_equal 2, test1.packets.length, "host1 test service"
+    assert_equal 1, test2.packets.length, "host2 test service"
   end
 
   def test_broadcast
