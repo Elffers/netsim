@@ -42,11 +42,13 @@ class IPv4Address
   def network_addr(mask_size)
     addr = IPv4Address.new
     # -1 is always all ones in 2's-complement int representation
+    # zeros out everything except what's under the subnet mask
     addr.word = @word & (-1 << (32 - mask_size))
     addr
   end
 
   def host_addr(mask_size)
+    # zeros out everything except what's unmasked 
     @word & ~(-1 << (32 - mask_size))
   end
 
