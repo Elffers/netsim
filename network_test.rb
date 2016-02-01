@@ -20,15 +20,18 @@ class NetworkTest < Minitest::Test
     @host2.add_ethernet_interface
     @host3.add_ethernet_interface
 
+    # IP address assignment
+    # Here, the address are being statically assigned. In most local networks,
+    # these are automatically assigned by the DHCP server.
+    #
+    # NOTE: adding the ipv4 interface is necessary to register any protocol handlers
+    @host1.add_ipv4_interface(ip_address: "1.2.3.4", l2_interface: @host1.l2_interfaces.first)
+    @host2.add_ipv4_interface(ip_address: "1.2.3.5", l2_interface: @host2.l2_interfaces.first)
+
     @host1.l2_interfaces[0].connect_to(@switch.l2_interfaces[0])
     @host2.l2_interfaces[0].connect_to(@switch.l2_interfaces[1])
     @host3.l2_interfaces[0].connect_to(@switch.l2_interfaces[2])
 
-    # IP address assignment
-    # Here, the address are being statically assigned. In most local networks,
-    # these are automatically assigned by the DHCP server.
-    @host1.add_ipv4_interface(ip_address: "1.2.3.4", l2_interface: @host1.l2_interfaces.first)
-    @host2.add_ipv4_interface(ip_address: "1.2.3.5", l2_interface: @host2.l2_interfaces.first)
   end
 
   def teardown
@@ -73,15 +76,22 @@ class NetworkTest < Minitest::Test
 
   def test_ipv4address
     a = IPv4Address.new("1.2.3.4")
+
     assert_equal "1.2.3.0", a.network_addr(24).to_s
     assert_equal 4, a.host_addr(24)
   end
 
   def test_arp
     Log.puts "--- arp"
-    arp1 = ArpService.new(@host1)
-    arp2 = ArpService.new(@host2)
-    arp1.lookup(@host2_ip) { |mac| Log.puts ">>> #{mac}" }
+    arp1 = @host1.l3_interfaces.first.arp_service
+    arp2 = @host2.l3_interfaces.first.arp_service
+    # arp1.lookup(@host2.ip_address) { |mac| Log.puts ">>> #{mac}" }
+    actual_mac = arp1.lookup(@host2.ip_address) { |mac| mac }
+    assert_equal @host2.mac_address, actual_mac
+  end
+
+  def test_add_ipv4_interface
+    assert_equal "1.2.3.4", @host1.ip_address
   end
 
   def test_ip_send
@@ -89,4 +99,5 @@ class NetworkTest < Minitest::Test
     packet = Layer3Packet.new(from_ip: @host1_ip, to_ip: @host2_ip, payload: "hey ho")
     @host1.l3_interfaces[0].ipv4_packet_out(packet)
   end
+
 end
