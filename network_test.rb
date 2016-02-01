@@ -92,8 +92,17 @@ class NetworkTest < Minitest::Test
   def test_broadcast
     Log.puts "--- broadcast"
 
-    packet = Layer2Packet.new(to_mac: MacAddress::BROADCAST, payload: "hello everyone")
+    test = TestService.new(@host2)
+
+    packet = Layer2Packet.new(
+      to_mac: MacAddress::BROADCAST,
+      payload: "hello everyone",
+      protocol: :test)
     @host1.l2_interfaces[0].packet_out(packet)
+
+    sleep 0.1
+
+    assert_equal 1, test.packets.length, "Broadcast packet received"
   end
 
   def test_ipv4address
