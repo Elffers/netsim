@@ -1,5 +1,7 @@
 require 'agent'
 require 'pry'
+Thread.abort_on_exception = true
+
 module Layer2Interface end
 module Layer3Interface end
 require_relative 'arp_payload'
