@@ -3,12 +3,14 @@
 class Layer3Interface::IPv4
   attr_reader :ip_address
   attr_reader :l2_interface
+  attr_reader :arp_service
   attr_accessor :subnet_mask_size
 
   def initialize(host:, ip_address:, l2_interface:)
     @host = host
-    @arp_service = ArpService.new(@host)
+    @arp_service = ArpService.new(host)
     @l2_interface = l2_interface
+    @ip_address = ip_address
   end
 
   def ipv4_packet_in(ip_packet)
