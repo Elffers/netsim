@@ -4,6 +4,7 @@ class Host
   attr_reader :name
   attr_reader :l2_interfaces
   attr_reader :l3_interfaces
+  attr_reader :protocol_handlers
 
   def initialize(name)
     @name = name
@@ -24,12 +25,20 @@ class Host
       l2_interface: l2_interface)
   end
 
+  def ip_address
+    @l3_interfaces.first.ip_address
+  end
+
+  def mac_address
+    @l2_interfaces.first.mac_address
+  end
+
   def register_protocol_handler(protocol_name, handler)
     @protocol_handlers[protocol_name] = handler
   end
 
   def handle_packet(interface, packet)
-    handler = @protocol_handlers[packet.protocol]
+    handler = protocol_handlers[packet.protocol]
     if handler
       begin
         handler.handle_packet(interface, packet)
