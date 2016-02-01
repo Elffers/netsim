@@ -32,7 +32,7 @@ class Layer2Interface::Ethernet
   end
 
   # Process an outgoing packet.
-
+  #
   def packet_out(packet)
     packet.from_mac = @mac_address
     Log.puts "#{@host.name}/#{@name} sending #{packet}" if @trace

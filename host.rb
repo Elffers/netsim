@@ -14,7 +14,9 @@ class Host
   end
 
   def add_ethernet_interface
-    @l2_interfaces << Layer2Interface::Ethernet.new(self, "eth#{l2_interfaces.size}")
+    interface = Layer2Interface::Ethernet.new(self, "eth#{l2_interfaces.size}")
+    @l2_interfaces << interface
+    interface
   end
 
   def add_ipv4_interface(l2_interface:, ip_address:)

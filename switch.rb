@@ -24,8 +24,13 @@ class Switch < Host
     super
     # TODO: Switch will inherit @l3_interfaces, but shouldn't. Refactor later.
     @mutex = Mutex.new
-    @l2_interfaces.each { |intf| intf.promiscuous = true }
     @mac_map = {}
+  end
+
+  def add_ethernet_interface
+    interface = super
+    interface.promiscuous = true
+    interface
   end
 
   def handle_packet(interface, packet)
