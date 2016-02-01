@@ -46,9 +46,9 @@ class ArpService
           end
         end
       when :reply
-        Log.puts "#{interface.full_name} ARP: got reply for #{arp.sender_ip}"
+        Log.puts "#{interface.full_name} ARP: got reply for #{arp.sender_ip} is at #{arp.sender_mac}"
         reply_chans = @mutex.synchronize { @pending_replies.delete(arp.sender_ip) }
-        reply_chans.each { |c| c << arp.target_mac } if reply_chans
+        reply_chans.each { |c| c << arp.sender_mac } if reply_chans
     end
   end
 

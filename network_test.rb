@@ -84,10 +84,9 @@ class NetworkTest < Minitest::Test
   def test_arp
     Log.puts "--- arp"
     arp1 = @host1.l3_interfaces.first.arp_service
-    arp2 = @host2.l3_interfaces.first.arp_service
-    # arp1.lookup(@host2.ip_address) { |mac| Log.puts ">>> #{mac}" }
-    actual_mac = arp1.lookup(@host2.ip_address) { |mac| mac }
-    assert_equal @host2.mac_address, actual_mac
+    arp1.lookup(@host2.ip_address) do |mac|
+      assert_equal @host2.mac_address, mac
+    end
   end
 
   def test_add_ipv4_interface
