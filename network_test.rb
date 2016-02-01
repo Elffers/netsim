@@ -129,14 +129,14 @@ class NetworkTest < Minitest::Test
     assert_equal "1.2.3.4", @host1.ip_address
   end
 
-  def test_ip_send
+  def test_ipv4_packet_out
     Log.puts "--- ip send"
     packet = Layer3Packet.new(
       from_ip: @host1.ip_address,
       to_ip: @host2.ip_address,
       payload: "hey ho")
 
-    @host1.l3_interfaces[0].ipv4_packet_out(packet)
+    @host1.l3_interfaces[0].packet_out(packet)
   end
 
 end

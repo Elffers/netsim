@@ -13,7 +13,7 @@ class Layer3Interface::IPv4
     @ip_address = ip_address
   end
 
-  def ipv4_packet_out(ip_packet)
+  def packet_out(ip_packet)
     ip_packet.from_ip = @ip_address
     Log.puts "#{@host.name}/#{@name} sending #{ip_packet}" if @trace
     ethernet_packet = encapsulate(ip_packet)
