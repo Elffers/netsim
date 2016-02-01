@@ -132,9 +132,10 @@ class NetworkTest < Minitest::Test
   def test_ip_send
     Log.puts "--- ip send"
     packet = Layer3Packet.new(
-      from_ip: @host1_ip,
-      to_ip: @host2_ip,
+      from_ip: @host1.ip_address,
+      to_ip: @host2.ip_address,
       payload: "hey ho")
+
     @host1.l3_interfaces[0].ipv4_packet_out(packet)
   end
 
