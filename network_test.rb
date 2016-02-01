@@ -105,14 +105,19 @@ class NetworkTest < Minitest::Test
     assert_equal 1, test.packets.length, "Broadcast packet received"
   end
 
-  def test_ipv4address
+  def test_ipv4address_network_addr
     a = IPv4Address.new("1.2.3.4")
 
-    assert_equal "1.2.3.0", a.network_addr(24).to_s
-    assert_equal 4, a.host_addr(24)
+    assert_equal 4, a.host_addr(24), "Network address"
   end
 
-  def test_arp
+  def test_ipv4address_host_addr
+    a = IPv4Address.new("1.2.3.4")
+
+    assert_equal 4, a.host_addr(24), "Host address"
+  end
+
+  def test_arp_lookup
     Log.puts "--- arp"
     arp1 = @host1.l3_interfaces.first.arp_service
     arp1.lookup(@host2.ip_address) do |mac|
@@ -126,7 +131,10 @@ class NetworkTest < Minitest::Test
 
   def test_ip_send
     Log.puts "--- ip send"
-    packet = Layer3Packet.new(from_ip: @host1_ip, to_ip: @host2_ip, payload: "hey ho")
+    packet = Layer3Packet.new(
+      from_ip: @host1_ip,
+      to_ip: @host2_ip,
+      payload: "hey ho")
     @host1.l3_interfaces[0].ipv4_packet_out(packet)
   end
 

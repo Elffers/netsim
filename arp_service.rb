@@ -34,6 +34,8 @@ class ArpService
     end
   end
 
+  # Every protocol handler must have a handle_packet method, called from
+  # Host#handle_packet
   def handle_packet(interface, packet)
     arp = packet.payload
     case arp.operation
