@@ -12,8 +12,8 @@ class Layer3Packet
   attr_accessor :to_ip
   attr_accessor :payload
 
-  def initialize(from_ip:, to_ip:, payload:)
-    @from_ip = from_ip
+  def initialize(to_ip:, payload:)
+    @from_ip = nil
     @to_ip = to_ip
     @payload = payload
   end

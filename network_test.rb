@@ -146,7 +146,6 @@ class NetworkTest < Minitest::Test
     )
 
     packet = Layer3Packet.new(
-      from_ip: @host1.ip_address,
       to_ip: @host2.ip_address,
       payload: "hey ho")
 
