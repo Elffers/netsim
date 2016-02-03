@@ -89,7 +89,7 @@ class NetworkTest < Minitest::Test
 
     Thread.pass
 
-    sleep 0.1
+    sleep 0.5
 
     assert_equal 2, test1.packets.length, "host1 test service"
     assert_equal 1, test2.packets.length, "host2 test service"
@@ -155,4 +155,34 @@ class NetworkTest < Minitest::Test
     assert_equal '1.2.3.4', packet.from_ip
   end
 
+  def test_udp_packet_out
+    Log.puts "--- UDP send"
+
+    l2_interface = Layer2Interface::Test.new
+    l3_interface = Layer3Interface::IPv4.new(
+      host: @host1,
+      ip_address: '1.2.3.4',
+      l2_interface: l2_interface
+    )
+    udp_socket = Layer4Interface::UDPSocket.new(
+      l3_interface: l3_interface,
+      from_port: 1,
+      to_port: 2,
+      to_ip: @host2.ip_address
+    )
+
+    payload =  "hey ho"
+    udp_socket.packet_out(payload)
+
+    assert_equal 1, l2_interface.packets.count
+
+    received_l2_packet = l2_interface.packets.first
+    received_l3_packet = received_l2_packet.payload
+    received_l4_packet = received_l3_packet.payload
+
+    assert_equal @host2.ip_address, received_l3_packet.to_ip
+    assert_equal 1, received_l4_packet.from_port
+    assert_equal 2, received_l4_packet.to_port
+    assert_equal 'hey ho', received_l4_packet.payload
+  end
 end

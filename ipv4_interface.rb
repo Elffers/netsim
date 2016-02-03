@@ -11,9 +11,10 @@ class Layer3Interface::IPv4
     @ipv4_service = IPv4Service.new(host)
     @l2_interface = l2_interface
     @ip_address = ip_address
+    @trace = false
   end
 
-  def packet_out(ip_packet)
+  def packet_out(ip_packet) # Interface could have more than one ip_address, so this should be set on the packet (maybe)
     ip_packet.from_ip = @ip_address
     Log.puts "#{@host.name}/#{@name} sending #{ip_packet}" if @trace
     ethernet_packet = encapsulate(ip_packet)
