@@ -56,7 +56,7 @@ class NetworkTest < Minitest::Test
     )
     @host1.l2_interfaces[0].packet_out(packet)
 
-    sleep 0.1
+    Thread.pass
 
     # This is the first packet that should be successfully received because the
     # switch knows where to send packets destined for host1
@@ -67,6 +67,8 @@ class NetworkTest < Minitest::Test
     )
     @host2.l2_interfaces[0].packet_out(packet)
 
+    Thread.pass
+
     # Host1 sending a packet to host2 should succeed
     packet = Layer2Packet.new(
       to_mac: @host2.l2_interfaces[0].mac_address,
@@ -75,6 +77,8 @@ class NetworkTest < Minitest::Test
     )
     @host1.l2_interfaces[0].packet_out(packet)
 
+    Thread.pass
+
     # Host2 sending a packet to host1 should succeed
     packet = Layer2Packet.new(
       to_mac: @host1.l2_interfaces[0].mac_address,
@@ -82,6 +86,8 @@ class NetworkTest < Minitest::Test
       protocol: :test
     )
     @host2.l2_interfaces[0].packet_out(packet)
+
+    Thread.pass
 
     sleep 0.1
 
