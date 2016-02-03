@@ -131,12 +131,23 @@ class NetworkTest < Minitest::Test
 
   def test_ipv4_packet_out
     Log.puts "--- ip send"
+
+    l2_interface = Layer2Interface::Test.new
+    l3_interface = Layer3Interface::IPv4.new(
+      host: @host1,
+      ip_address: '1.2.3.4',
+      l2_interface: l2_interface
+    )
+
     packet = Layer3Packet.new(
       from_ip: @host1.ip_address,
       to_ip: @host2.ip_address,
       payload: "hey ho")
 
-    @host1.l3_interfaces[0].packet_out(packet)
+    l3_interface.packet_out(packet)
+
+    assert_equal 1, l2_interface.packets.count
+    assert_equal '1.2.3.4', packet.from_ip
   end
 
 end
